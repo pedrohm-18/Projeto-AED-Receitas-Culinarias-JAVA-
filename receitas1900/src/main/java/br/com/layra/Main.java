@@ -13,70 +13,57 @@ public class Main {
     static String arquivo = "receitas.txt";
 
     public static void main(String[] args) {
-
         int opcao;
 
         carregar();
 
         do {
-
             mostrarMenu();
             opcao = lerOpcao();
 
             switch (opcao) {
-
                 case 1:
                     cadastrar();
-                    salvar();
+                    salvar(); 
                     break;
-
                 case 2:
                     listar();
                     break;
-
                 case 3:
                     buscar();
                     break;
-
                 case 4:
                     editar();
-                    salvar();
+                    salvar(); 
                     break;
-
                 case 5:
                     excluir();
-                    salvar();
+                    salvar(); 
                     break;
-
                 case 0:
-                    System.out.println("\nEncerrando o programa...");
+                    System.out.println("Encerrando o programa. Ate logo!");
                     break;
-
                 default:
-                    System.out.println("\nOpcao invalida.");
+                    System.out.println("Opcao invalida! Tente novamente.");
             }
 
             System.out.println();
-
         } while (opcao != 0);
     }
 
     static void mostrarMenu() {
-
-        System.out.println("\n===== CADERNO DE RECEITAS =====");
+        System.out.println("===== CADERNO DE RECEITAS =====");
         System.out.println("1 - Cadastrar receita");
         System.out.println("2 - Listar receitas");
-        System.out.println("3 - Buscar receita");
+        System.out.println("3 - Buscar receita pelo nome");
         System.out.println("4 - Editar receita");
         System.out.println("5 - Excluir receita");
         System.out.println("0 - Sair");
-        System.out.print("\nEscolha uma opcao: ");
+        System.out.print("Escolha uma opcao: ");
     }
 
     static int lerOpcao() {
-
         String linha = entrada.nextLine();
-
         try {
             return Integer.parseInt(linha.trim());
         } catch (NumberFormatException e) {
@@ -84,136 +71,109 @@ public class Main {
         }
     }
 
-    static String lerTexto() {
-
-        StringBuilder texto = new StringBuilder();
-
+    static String lerTextoMultiplasLinhas() {
+        StringBuilder blocoTexto = new StringBuilder();
         while (entrada.hasNextLine()) {
-
             String linha = entrada.nextLine();
-
             if (linha.equalsIgnoreCase("FIM")) {
                 break;
             }
-
-            if (texto.length() > 0) {
-                texto.append("[BR]");
+            if (blocoTexto.length() > 0) {
+                blocoTexto.append("[BR]");
             }
-
-            texto.append(linha);
+            blocoTexto.append(linha);
         }
-
-        return texto.toString();
+        return blocoTexto.toString();
     }
 
     static void cadastrar() {
-
         if (qtdReceitas >= receitas.length) {
-            System.out.println("\nLimite de receitas atingido.");
+            System.out.println("O caderno esta cheio! Nao da para cadastrar mais receitas.");
             return;
         }
 
-        System.out.print("\nNome da receita: ");
+        System.out.print("Nome da receita: ");
         String nome = entrada.nextLine();
 
         if (nome.trim().isEmpty()) {
-            System.out.println("Nome invalido.");
+            System.out.println("O nome nao pode ficar em branco. Receita nao cadastrada.");
             return;
         }
 
-        System.out.println("\nDigite os ingredientes:");
-        System.out.println("(Digite FIM para terminar)");
-
-        String ingredientes = lerTexto();
+        System.out.println("Digite os Ingredientes (Aperte ENTER para pular linha. Digite FIM para encerrar):");
+        String ingredientes = lerTextoMultiplasLinhas();
 
         if (ingredientes.trim().isEmpty()) {
-            System.out.println("Digite os ingredientes.");
+            System.out.println("Adicione pelo menos um ingrediente. Receita nao cadastrada.");
             return;
         }
 
-        System.out.println("\nDigite o modo de preparo:");
-        System.out.println("(Digite FIM para terminar)");
-
-        String preparo = lerTexto();
+        System.out.println("Digite o Modo de preparo (Aperte ENTER para pular linha. Digite FIM para encerrar):");
+        String preparo = lerTextoMultiplasLinhas();
 
         if (preparo.trim().isEmpty()) {
-            System.out.println("Digite o modo de preparo.");
+            System.out.println("Adicione o modo de preparo, nao pode ser cadastrada sem.");
             return;
         }
 
         receitas[qtdReceitas][0] = nome;
         receitas[qtdReceitas][1] = ingredientes;
         receitas[qtdReceitas][2] = preparo;
-
         qtdReceitas++;
 
-        System.out.println("\nReceita cadastrada com sucesso!");
+        System.out.println("Receita cadastrada com sucesso!");
     }
 
     static void listar() {
-
         if (qtdReceitas == 0) {
-            System.out.println("\nNenhuma receita cadastrada.");
+            System.out.println("Nenhuma receita cadastrada ainda.");
             return;
         }
 
-        System.out.println("\n=========== RECEITAS CADASTRADAS ===========");
-
+        System.out.println("===== RECEITAS CADASTRADAS =====");
         for (int i = 0; i < qtdReceitas; i++) {
-
-            System.out.println("\nReceita " + (i + 1));
-            System.out.println("\nNome:");
-            System.out.println(receitas[i][0]);
-            System.out.println("\nIngredientes:");
-            System.out.println(receitas[i][1].replace("[BR]", "\n"));
-            System.out.println("\nModo de preparo:");
-            System.out.println(receitas[i][2].replace("[BR]", "\n"));
-            System.out.println("\n--------------------------------------------");
+            System.out.println("Receita " + (i + 1));
+            System.out.println("  Nome.........: " + receitas[i][0]);
+            System.out.println("  Ingredientes.: \n" + receitas[i][1].replace("[BR]", "\n"));
+            System.out.println("  Preparo......: \n" + receitas[i][2].replace("[BR]", "\n"));
+            System.out.println("--------------------------------");
         }
     }
 
     static void buscar() {
-
         if (qtdReceitas == 0) {
-            System.out.println("\nNenhuma receita cadastrada.");
+            System.out.println("Nenhuma receita cadastrada ainda.");
             return;
         }
 
-        System.out.print("\nDigite o nome da receita: ");
-        String busca = entrada.nextLine();
+        System.out.print("Digite o nome da receita: ");
+        String alvo = entrada.nextLine();
 
-        boolean encontrou = false;
-
+        boolean achou = false;
         for (int i = 0; i < qtdReceitas; i++) {
-
-            if (receitas[i][0].toLowerCase().contains(busca.toLowerCase())) {
-
-                System.out.println("\nReceita encontrada:");
-                System.out.println("\nNome:");
-                System.out.println(receitas[i][0]);
-                System.out.println("\nIngredientes:");
-                System.out.println(receitas[i][1].replace("[BR]", "\n"));
-                System.out.println("\nModo de preparo:");
-                System.out.println(receitas[i][2].replace("[BR]", "\n"));
-                encontrou = true;
+            if (receitas[i][0].toLowerCase().contains(alvo.toLowerCase())) {
+                System.out.println("Receita encontrada:");
+                System.out.println("  Nome.........: " + receitas[i][0]);
+                System.out.println("  Ingredientes.: \n" + receitas[i][1].replace("[BR]", "\n"));
+                System.out.println("  Preparo......: \n" + receitas[i][2].replace("[BR]", "\n"));
+                System.out.println("--------------------------------");
+                achou = true;
             }
         }
 
-        if (!encontrou) {
-            System.out.println("\nReceita nao encontrada.");
+        if (!achou) {
+            System.out.println("Nenhuma receita encontrada com esse nome.");
         }
     }
 
     static void editar() {
-
         if (qtdReceitas == 0) {
-            System.out.println("\nNenhuma receita cadastrada.");
+            System.out.println("Nenhuma receita cadastrada para editar.");
             return;
         }
 
         listar();
-
-        System.out.print("\nDigite o numero da receita: ");
+        System.out.print("Digite o numero da receita que deseja editar: ");
         int num = lerOpcao();
 
         if (num < 1 || num > qtdReceitas) {
@@ -223,38 +183,86 @@ public class Main {
 
         int indice = num - 1;
 
-        System.out.println("\nEditando: " + receitas[indice][0]);
-        System.out.println("\nNovos ingredientes:");
-        System.out.println("(Digite FIM para terminar)");
+        System.out.println("\nEditando a receita: " + receitas[indice][0]);
+        System.out.println("Digite os NOVOS Ingredientes (Aperte ENTER para pular linha. Digite FIM para encerrar):");
+        String novosIngredientes = lerTextoMultiplasLinhas();
 
-        String ingredientes = lerTexto();
+        System.out.println("Digite o NOVO Modo de preparo (Aperte ENTER para pular linha. Digite FIM para encerrar):");
+        String novoPreparo = lerTextoMultiplasLinhas();
 
-        System.out.println("\nNovo modo de preparo:");
-        System.out.println("(Digite FIM para terminar)");
-
-        String preparo = lerTexto();
-
-        if (!ingredientes.trim().isEmpty()) {
-            receitas[indice][1] = ingredientes;
+        if (!novosIngredientes.trim().isEmpty()) {
+            receitas[indice][1] = novosIngredientes;
+        }
+        if (!novoPreparo.trim().isEmpty()) {
+            receitas[indice][2] = novoPreparo;
         }
 
-        if (!preparo.trim().isEmpty()) {
-            receitas[indice][2] = preparo;
+        System.out.println("Receita alterada com sucesso!");
+    }
+
+    static void salvar() {
+        if (qtdReceitas == 0) {
+            try {
+                FileWriter escritor = new FileWriter(arquivo);
+                escritor.write("");
+                escritor.close();
+            } catch (IOException e) {
+            }
+            return;
         }
 
-        System.out.println("\nReceita alterada com sucesso!");
+        try {
+            FileWriter escritor = new FileWriter(arquivo);
+            for (int i = 0; i < qtdReceitas; i++) {
+                escritor.write("Nome: " + receitas[i][0] + "\n");
+                escritor.write("Ingredientes: " + receitas[i][1] + "\n");
+                escritor.write("Modo de preparo: " + receitas[i][2] + "\n");
+                escritor.write("=====\n");
+            }
+            escritor.close();
+            System.out.println("Receitas salvas automaticamente.");
+        } catch (IOException e) {
+            System.out.println("Erro ao salvar o arquivo: " + e.getMessage());
+        }
+    }
+
+    static void carregar() {
+        File f = new File(arquivo);
+        if (!f.exists()) {
+            return;
+        }
+
+        try {
+            Scanner leitor = new Scanner(f);
+            qtdReceitas = 0;
+
+            while (leitor.hasNextLine() && qtdReceitas < receitas.length) {
+                String linha = leitor.nextLine();
+
+                if (linha.startsWith("Nome: ")) {
+                    receitas[qtdReceitas][0] = linha.substring(6);
+                } else if (linha.startsWith("Ingredientes: ")) {
+                    receitas[qtdReceitas][1] = linha.substring(14);
+                } else if (linha.startsWith("Modo de preparo: ")) {
+                    receitas[qtdReceitas][2] = linha.substring(17);
+                } else if (linha.equals("=====")) {
+                    qtdReceitas++;
+                }
+            }
+            leitor.close();
+        } catch (IOException e) {
+            System.out.println("Erro ao ler o arquivo: " + e.getMessage());
+        }
     }
 
     static void excluir() {
-
         if (qtdReceitas == 0) {
-            System.out.println("\nNenhuma receita cadastrada.");
+            System.out.println("Nenhuma receita cadastrada ainda.");
             return;
         }
 
         listar();
-
-        System.out.print("\nDigite o numero da receita: ");
+        System.out.print("Digite o numero da receita que deseja excluir: ");
         int num = lerOpcao();
 
         if (num < 1 || num > qtdReceitas) {
@@ -263,77 +271,12 @@ public class Main {
         }
 
         for (int i = num - 1; i < qtdReceitas - 1; i++) {
-
             receitas[i][0] = receitas[i + 1][0];
             receitas[i][1] = receitas[i + 1][1];
             receitas[i][2] = receitas[i + 1][2];
         }
-
         qtdReceitas--;
 
-        System.out.println("\nReceita excluida com sucesso!");
-    }
-
-    static void salvar() {
-
-        try {
-
-            FileWriter escritor = new FileWriter(arquivo);
-
-            for (int i = 0; i < qtdReceitas; i++) {
-
-                escritor.write("Nome: " + receitas[i][0] + "\n");
-                escritor.write("Ingredientes: " + receitas[i][1] + "\n");
-                escritor.write("Modo de preparo: " + receitas[i][2] + "\n");
-                escritor.write("=====\n");
-            }
-
-            escritor.close();
-
-        } catch (IOException e) {
-            System.out.println("Erro ao salvar.");
-        }
-    }
-
-    static void carregar() {
-
-        File f = new File(arquivo);
-
-        if (!f.exists()) {
-            return;
-        }
-
-        try {
-
-            Scanner leitor = new Scanner(f);
-            qtdReceitas = 0;
-
-            while (leitor.hasNextLine() && qtdReceitas < receitas.length) {
-
-                String linha = leitor.nextLine();
-
-                if (linha.startsWith("Nome: ")) {
-
-                    receitas[qtdReceitas][0] = linha.substring(6);
-
-                } else if (linha.startsWith("Ingredientes: ")) {
-
-                    receitas[qtdReceitas][1] = linha.substring(14);
-
-                } else if (linha.startsWith("Modo de preparo: ")) {
-
-                    receitas[qtdReceitas][2] = linha.substring(17);
-
-                } else if (linha.equals("=====")) {
-
-                    qtdReceitas++;
-                }
-            }
-
-            leitor.close();
-
-        } catch (IOException e) {
-            System.out.println("Erro ao carregar arquivo.");
-        }
+        System.out.println("Receita excluida com sucesso!");
     }
 }
